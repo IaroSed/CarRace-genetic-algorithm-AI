@@ -11,7 +11,7 @@ import pandas as pd
 import heapq
 import numpy as np
 from pygame.math import Vector2
-from math import tan, radians, degrees, copysign
+from math import tan, radians, degrees, copysign, sqrt
 
 
 # Defining constants
@@ -79,16 +79,14 @@ class Car():
         
         if self.steering:
             turning_radius = self.length / tan(radians(self.steering))
-            #print("TurnRad",turning_radius)
-            angular_velocity = self.velocity.x / turning_radius
-            print("Velocity",self.velocity.x)
+            angular_velocity = sqrt(self.velocity.x**2 + self.velocity.y**2) / turning_radius
+
         else:
             angular_velocity = 0
             
         self.position += self.velocity.rotate(-self.angle) * dt
         self.angle += degrees(angular_velocity) * dt
-        print("Ang velocity",angular_velocity)
-    
+
 
         
         
@@ -100,7 +98,7 @@ car = Car()
     
 pygame.init()
 pygame.font.init()
-start = pygame.time.get_ticks()
+#start = pygame.time.get_ticks()
 
 #Opening the screen
 win = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT+TEXT_ZONE))   
@@ -111,18 +109,16 @@ while run:
     
     pygame.time.delay(100)
     
-    update = pygame.time.get_ticks() 
-    dt = (update - start)/100
-    start = update
-    print(dt)
+    #update = pygame.time.get_ticks() 
+    #dt = (update - start)/100
+    #start = update
+    
+    dt = 1
 
     win.fill((0,0,0))
     
     win.blit(bg_sprite, (0,0))
-    
-    #win.blit(car_im, (CAR_INIT_X,CAR_INIT_Y))
-    
-    #dt = 1
+
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -132,11 +128,9 @@ while run:
     keys = pygame.key.get_pressed()
     
     if keys[pygame.K_LEFT]:
-        print("Left", car.steering, car.angle)
-        car.steering -= 30 * dt
-    elif keys[pygame.K_RIGHT]:
-        print("Right", car.steering, car.angle)
         car.steering += 30 * dt
+    elif keys[pygame.K_RIGHT]:
+        car.steering -= 30 * dt
     else:
         car.steering = 0
 
@@ -146,8 +140,12 @@ while run:
 
     rotated = pygame.transform.rotate(car_image, car.angle)
     rect = rotated.get_rect()
-    #ppu = 2
+
     win.blit(rotated, Vector2(car.position)  - (rect.width / 2, rect.height / 2))
+    
+    #Collision detection
+    if (bg_sprite.get_at((int(car.position.x),int(car.position.y)))!=ROAD_COLOR):
+        print("Out of road")
    
             
     pygame.display.update()
