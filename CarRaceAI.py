@@ -10,6 +10,36 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from keras import backend as K
+
+NUMBER_MODELS = 20
+
+classifier = [0] * NUMBER_MODELS
+
+for i in range(0,NUMBER_MODELS):
+    # Initialising the ANN
+    classifier[i] = Sequential()
+    # Adding the input layer and the first hidden layer
+    classifier[i].add(Dense(output_dim = 4, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
+    # Adding the output layer
+    classifier[i].add(Dense(output_dim = 2, kernel_initializer='random_uniform', activation = 'sigmoid'))
+    
+    # Compiling the ANN
+    classifier[i].compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy']) 
+
+
+# Creating a holder to remember the 10 best models
+best_classifiers = [0] * 10
+
+for i in range(0,10):
+    # Initialising the ANN
+    best_classifiers[i] = Sequential()
+    # Adding the input layer and the first hidden layer
+    best_classifiers[i].add(Dense(output_dim = 4, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
+    # Adding the output layer
+    best_classifiers[i].add(Dense(output_dim = 2, kernel_initializer='random_uniform', activation = 'sigmoid'))
+    
+    # Compiling the ANN
+    best_classifiers[i].compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy']) 
 '''
 
 import pygame
@@ -50,35 +80,7 @@ car_image = pygame.image.load('Car.png')
 # Creating classifiers.
 ## TEMPORARY. Move to Car class.
 '''
-NUMBER_MODELS = 20
 
-classifier = [0] * NUMBER_MODELS
-
-for i in range(0,NUMBER_MODELS):
-    # Initialising the ANN
-    classifier[i] = Sequential()
-    # Adding the input layer and the first hidden layer
-    classifier[i].add(Dense(output_dim = 4, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
-    # Adding the output layer
-    classifier[i].add(Dense(output_dim = 2, kernel_initializer='random_uniform', activation = 'sigmoid'))
-    
-    # Compiling the ANN
-    classifier[i].compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy']) 
-
-
-# Creating a holder to remember the 10 best models
-best_classifiers = [0] * 10
-
-for i in range(0,10):
-    # Initialising the ANN
-    best_classifiers[i] = Sequential()
-    # Adding the input layer and the first hidden layer
-    best_classifiers[i].add(Dense(output_dim = 4, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
-    # Adding the output layer
-    best_classifiers[i].add(Dense(output_dim = 2, kernel_initializer='random_uniform', activation = 'sigmoid'))
-    
-    # Compiling the ANN
-    best_classifiers[i].compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy']) 
 '''
 
 
@@ -113,13 +115,12 @@ class Car():
         else:
             angular_velocity = 0
         
-        #Saving the old position for fitness calculation
-        position_i =  self.position
         
         self.position += self.velocity.rotate(-self.angle) * dt
         self.position.x = int(self.position.x)
         self.position.y = int(self.position.y)
         self.angle += degrees(angular_velocity) * dt
+        
         
         #Updating the fitness
         self.fitness += CAR_SPEED 
@@ -196,6 +197,8 @@ def calculate_distances(position, a):
     #pygame.draw.circle(win, (255,0,0), (int(xdl), int(ydl)), 2)
     
     return df,dr,dl,ddr,ddl
+
+
     
 def crossover(fitness):
     
@@ -242,7 +245,6 @@ def crossover(fitness):
     for i in range(15,20):
         classifier[i].set_weights([best_classifiers[i-15].get_weights()[0], best_classifiers[i-15].get_weights()[1], CPw[14-i] , best_classifiers[i-15].get_weights()[3]])  
         
-    #print("6: " + str(best_classifiers[0].get_weights()[0][0]))
 
         
 def mutate():
@@ -292,7 +294,7 @@ def mutate():
     print("7: " + str(best_classifiers[0].get_weights()[0][0]))    
 
 
-#car = Car()    
+## End of functions
 
 
 ### Main    
@@ -334,10 +336,6 @@ while run:
     generation_info = myfont.render('Generation ' + str(Generation) + " Best fitness: " + str(best_fitness[0]) , False, (255, 255, 255))
     
     
-    #update = pygame.time.get_ticks() 
-    #dt = (update - start)/100
-    #start = update
-    
     dt = 1
 
     win.fill((0,0,0))
@@ -360,6 +358,7 @@ while run:
         win.blit(rotated, Vector2(car[i].position)  - (rect.width / 2, rect.height / 2))
         
         car[i].steering = max(-car[i].max_steering, min(car[i].steering, car[i].max_steering))
+
         
         if (car[i].alive == True):
             car[i].update(dt)
@@ -416,9 +415,14 @@ while run:
             car[i].alive = True
     
     alive = []
-    fitness = []        
-            
-    pygame.display.update()
+    fitness = []     
+    
+    #Showing generation
+    win.blit(generation_info,(5,SCREEN_HEIGHT + 2))
+
+    
+    #pygame.display.update()
+    pygame.display.flip()
     
 
 pygame.quit()
