@@ -77,12 +77,6 @@ bg_sprite = pygame.image.load('Circuit.png')
 car_image = pygame.image.load('Car.png')
 
 
-# Creating classifiers.
-## TEMPORARY. Move to Car class.
-'''
-
-'''
-
 
 # Defining classes
 class Car():
@@ -286,7 +280,14 @@ def mutate():
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
+                E[j] += change
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                #number_changes += 1
+            if random.uniform(0,1) > PROBA:
+                change = random.uniform(-DELTA,DELTA)
                 Z[j][0] += change
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+            if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 Z[j][1] += change
                 classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
