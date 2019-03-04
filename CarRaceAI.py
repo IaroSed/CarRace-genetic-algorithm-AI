@@ -76,7 +76,7 @@ DELTA = 0.5
 bg_sprite = pygame.image.load('Circuit.png')
 car_image = pygame.image.load('Car.png')
 
-
+#Exit_RS = open("ResultsSelection.txt", 'w',encoding='utf-8')
 
 # Defining classes
 class Car():
@@ -96,6 +96,8 @@ class Car():
         self.alive = True
         
         self.fitness = 0
+        
+        self.index = 0
 
     
     def update(self, dt):
@@ -320,6 +322,11 @@ for i in range(0,NUMBER_MODELS):
 alive = []
 fitness = []
 
+
+# Controlling the direction of movement
+Rect_list = [pygame.Rect(20,200,100,10), pygame.Rect(270,170,100,10), pygame.Rect(530,170,100,10), pygame.Rect(790,200,100,10), pygame.Rect(270,515,130,10), pygame.Rect(790,670,80,10), pygame.Rect(510,760,80,10), pygame.Rect(30,600,80,10)]
+
+
 Generation = 1
 
 myfont = pygame.font.SysFont('Comic Sans MS', 20)
@@ -332,7 +339,7 @@ run = True
 
 while run:
     
-    pygame.time.delay(10)
+    pygame.time.delay(5)
     
     generation_info = myfont.render('Generation ' + str(Generation) + " Best fitness: " + str(best_fitness[0]) , False, (255, 255, 255))
     
@@ -354,10 +361,11 @@ while run:
         #keys = pygame.key.get_pressed()
         
         rotated = pygame.transform.rotate(car_image, car[i].angle)
-        rect = rotated.get_rect()
+        car_rect = rotated.get_rect()
         
-        win.blit(rotated, Vector2(car[i].position)  - (rect.width / 2, rect.height / 2))
+        win.blit(rotated, Vector2(car[i].position)  - (car_rect.width / 2, car_rect.height / 2))
         
+               
         car[i].steering = max(-car[i].max_steering, min(car[i].steering, car[i].max_steering))
 
         
@@ -386,6 +394,21 @@ while run:
         #Collision detection
         if (bg_sprite.get_at((int(car[i].position.x),int(car[i].position.y)))!=ROAD_COLOR):
             car[i].alive = False
+        
+        car_rect = pygame.Rect(car[i].position.x,car[i].position.y,10,10)
+        index = car_rect.collidelist(Rect_list)
+        #print(index)
+        if index != -1:
+           # print("Collision")
+            if car[i].index == (index + 1)  % len(Rect_list):
+                #print("Going back", i, car[i].index, index)
+                #Exit_RS.write("Going back: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
+                car[i].alive = False
+                car[i].fitness = -100
+            else:
+                #print("Going forward", i, car[i].index, index)
+                #Exit_RS.write("Going forward: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
+                car[i].index = index
    
         alive.append(car[i].alive)
         fitness.append(car[i].fitness)
@@ -413,13 +436,20 @@ while run:
             car[i].velocity = Vector2(0.0, -1*CAR_SPEED)
             car[i].angle = CAR_INIT_ANGLE
             car[i].fitness = 0
+            car[i].index = 0
             car[i].alive = True
+           
     
     alive = []
     fitness = []     
     
     #Showing generation
     win.blit(generation_info,(5,SCREEN_HEIGHT + 2))
+    
+    #for i in range(0,len(Rect_list)):
+    #    pygame.draw.rect(win, (34, 139, 34), Rect_list[i])
+        
+    
 
     
     #pygame.display.update()
