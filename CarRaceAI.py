@@ -255,7 +255,10 @@ def mutate():
         D = classifier[i].get_weights()[0][3]
         E = classifier[i].get_weights()[0][4]
         Z = classifier[i].get_weights()[2]
-    
+        
+        Z1 = classifier[i].get_weights()[1]
+        Z2 = classifier[i].get_weights()[3]
+
         #number_changes = 0
         
         for j in range(0,3):
@@ -263,36 +266,36 @@ def mutate():
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 A[j] += change
-                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 B[j] += change
-                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 C[j] += change
-                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 D[j] += change
-                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 E[j] += change
-                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 Z[j][0] += change
-                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 Z[j][1] += change
-                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]) , np.zeros(4, dtype=float), Z , np.zeros(2, dtype=float)])
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
                 #number_changes += 1
     print("7: " + str(best_classifiers[0].get_weights()[0][0]))    
 
