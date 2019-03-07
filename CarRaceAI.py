@@ -19,9 +19,9 @@ for i in range(0,NUMBER_MODELS):
     # Initialising the ANN
     classifier[i] = Sequential()
     # Adding the input layer and the first hidden layer
-    classifier[i].add(Dense(output_dim = 4, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
+    classifier[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
     # Adding the output layer
-    classifier[i].add(Dense(output_dim = 2, kernel_initializer='random_uniform', activation = 'sigmoid'))
+    classifier[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'sigmoid'))
     
     # Compiling the ANN
     classifier[i].compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy']) 
@@ -34,9 +34,9 @@ for i in range(0,10):
     # Initialising the ANN
     best_classifiers[i] = Sequential()
     # Adding the input layer and the first hidden layer
-    best_classifiers[i].add(Dense(output_dim = 4, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
+    best_classifiers[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
     # Adding the output layer
-    best_classifiers[i].add(Dense(output_dim = 2, kernel_initializer='random_uniform', activation = 'sigmoid'))
+    best_classifiers[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'sigmoid'))
     
     # Compiling the ANN
     best_classifiers[i].compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy']) 
@@ -65,7 +65,12 @@ CAR_SPEED = 5
 CAR_INIT_ANGLE = 0
 CAR_LENGTH = 33
 CAR_WIDTH = 19
-CAR_MAX_STEER_ANGLE = 60
+CAR_MAX_STEER_ANGLE = 30
+CAR_MAX_ACCELERATION = 5
+CAR_MAX_VELOCITY = 100
+
+CAR_BRAKE_DECELERATION = 10
+CAR_FREE_DECELERATION = 2
 
 ROAD_COLOR = (96, 96, 96, 255)
 
@@ -88,7 +93,12 @@ class Car():
         self.length = CAR_LENGTH
         #self.width = CAR_WIDTH
         #self.max_acceleration = 0
-        self.max_steering = CAR_MAX_STEER_ANGLE 
+        self.max_steering = CAR_MAX_STEER_ANGLE
+        self.max_acceleration = CAR_MAX_ACCELERATION
+        self.max_velocity = CAR_MAX_VELOCITY
+        
+        self.brake_deceleration = CAR_BRAKE_DECELERATION
+        self.free_deceleration = CAR_FREE_DECELERATION
         
         self.acceleration = 0.0
         self.steering = 0.0
@@ -102,7 +112,9 @@ class Car():
     
     def update(self, dt):
         #Velocity is constant for the moment
-        #self.velocity += (self.acceleration * dt, 0)
+        #self.velocity += (self.acceleration * (-1) * sin(self.angle) * dt, self.acceleration * (-1) * cos(self.angle) * dt)
+        #self.velocity = (max(-self.max_velocity * (-1) * sin(self.angle), min(self.velocity.x, self.max_velocity * (-1) * sin(self.angle))), \
+        #                 max(-self.max_velocity * (-1) * cos(self.angle), min(self.velocity.y, self.max_velocity * (-1) * cos(self.angle))))
         
         if self.steering:
             turning_radius = self.length / tan(radians(self.steering))
@@ -219,7 +231,6 @@ def crossover(fitness):
     #Exit_RS.write("\n")
 
 
-
     #Replacing the first 5 classifiers by the best and no mutation 
     for i in range(0,5):
         classifier[i].set_weights(best_classifiers[i].get_weights())
@@ -261,7 +272,7 @@ def mutate():
 
         #number_changes = 0
         
-        for j in range(0,3):
+        for j in range(0,5):
             
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
@@ -296,6 +307,18 @@ def mutate():
                 change = random.uniform(-DELTA,DELTA)
                 Z[j][1] += change
                 classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
+            if random.uniform(0,1) > PROBA:
+                change = random.uniform(-DELTA,DELTA)
+                Z[j][2] += change
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
+            if random.uniform(0,1) > PROBA:
+                change = random.uniform(-DELTA,DELTA)
+                Z[j][3] += change
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
+            if random.uniform(0,1) > PROBA:
+                change = random.uniform(-DELTA,DELTA)
+                Z[j][4] += change
+                classifier[i].set_weights([np.array([list(A),list(B),list(C),list(D),list(E)]), Z1, Z, Z2])
                 #number_changes += 1
     print("7: " + str(best_classifiers[0].get_weights()[0][0]))    
 
@@ -315,7 +338,10 @@ win = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT+TEXT_ZONE))
 car = list(range(0,NUMBER_MODELS))
 X = list(range(0,NUMBER_MODELS))
 Turn_right = list(range(0,NUMBER_MODELS))
-Turn_left = list(range(0,NUMBER_MODELS)) 
+Turn_left = list(range(0,NUMBER_MODELS))
+Acceleration_up = list(range(0,NUMBER_MODELS)) 
+Acceleration_down = list(range(0,NUMBER_MODELS)) 
+Brakes = list(range(0,NUMBER_MODELS)) 
         
 for i in range(0,NUMBER_MODELS):
     car[i] = Car()
@@ -342,7 +368,7 @@ run = True
 
 while run:
     
-    pygame.time.delay(5)
+    #pygame.time.delay(5)
     
     generation_info = myfont.render('Generation ' + str(Generation) + " Best fitness: " + str(best_fitness[0]) , False, (255, 255, 255))
     
@@ -368,9 +394,6 @@ while run:
         
         win.blit(rotated, Vector2(car[i].position)  - (car_rect.width / 2, car_rect.height / 2))
         
-               
-        car[i].steering = max(-car[i].max_steering, min(car[i].steering, car[i].max_steering))
-
         
         if (car[i].alive == True):
             car[i].update(dt)
@@ -382,16 +405,50 @@ while run:
         # Predicting the Test set results:
         Turn_right[i] = classifier[i].predict(X[i])[0][0]
         Turn_left[i] = classifier[i].predict(X[i])[0][1]
+        Acceleration_up[i] = classifier[i].predict(X[i])[0][2]
+        Acceleration_down[i] = classifier[i].predict(X[i])[0][3]
+        Brakes[i] = classifier[i].predict(X[i])[0][4]
         
         Turn_right[i] = (Turn_right[i] > 0.5)
         Turn_left[i] = (Turn_left[i] > 0.5)
-    
+        Acceleration_up[i] = (Acceleration_up[i] > 0.5)
+        Acceleration_down[i] = (Acceleration_down[i] > 0.5)
+        Brakes[i] = (Brakes[i] > 0.5)
+        
+
+        if Acceleration_up[i]:
+            if car[i].velocity.x < 0:
+                car[i].acceleration = car[i].brake_deceleration
+            else:
+                car[i].acceleration += 1 * dt
+        elif Acceleration_down[i]:
+            if car[i].velocity.x > 0:
+                car[i].acceleration = -car[i].brake_deceleration
+            else:
+                car[i].acceleration -= 1 * dt
+        elif Brakes[i]:
+            if abs(car[i].velocity.x) > dt * car[i].brake_deceleration:
+                car[i].acceleration = -copysign(car[i].brake_deceleration, car[i].velocity.x)
+            else:
+                car[i].acceleration = -car[i].velocity.x / dt
+        else:
+            if abs(car[i].velocity.x) > dt * car[i].free_deceleration:
+                car[i].acceleration = -copysign(car[i].free_deceleration, car[i].velocity.x)
+            else:
+                if dt != 0:
+                    car[i].acceleration = -car[i].velocity.x / dt
+
+        car[i].acceleration = max(-car[i].max_acceleration, min(car[i].acceleration, car[i].max_acceleration))
+        
+        
         if Turn_left[i]:
             car[i].steering += 30 * dt
         elif Turn_right[i]:
             car[i].steering -= 30 * dt
         else:
             car[i].steering = 0
+            
+        car[i].steering = max(-car[i].max_steering, min(car[i].steering, car[i].max_steering))
 
         
         #Collision detection
@@ -418,7 +475,8 @@ while run:
     
     if (sum(alive) == 1):
         #Showing fitness of the last alive
-        fitness_info = myfont.render('Fitness of the last alive: ' + str(car[[i for i, x in enumerate(alive) if x][0]].fitness) , False, (255, 255, 255))
+        index_last = [i for i, x in enumerate(alive) if x][0]
+        fitness_info = myfont.render('Fitness of the last alive: ' + str(car[index_last].fitness) + ' Acceleration: ' + str(car[index_last].acceleration) + ' Velocity: ' + str(car[index_last].velocity) , False, (255, 255, 255))
         win.blit(fitness_info,(5,SCREEN_HEIGHT + 25))
         #Score
         #score_info = myfont.render('Score: ' + str(car[[i for i, x in enumerate(alive) if x][0]].score) , False, (0, 0, 0))
