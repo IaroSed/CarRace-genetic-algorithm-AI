@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Feb 22 14:11:46 2019
-
 @author: iasedric
 """
 # Keras is to be imported only once in the beggining.
@@ -10,11 +9,8 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from keras import backend as K
-
 NUMBER_MODELS = 20
-
 classifier = [0] * NUMBER_MODELS
-
 for i in range(0,NUMBER_MODELS):
     # Initialising the ANN
     classifier[i] = Sequential()
@@ -25,11 +21,8 @@ for i in range(0,NUMBER_MODELS):
     
     # Compiling the ANN
     classifier[i].compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy']) 
-
-
 # Creating a holder to remember the 10 best models
 best_classifiers = [0] * 10
-
 for i in range(0,10):
     # Initialising the ANN
     best_classifiers[i] = Sequential()
@@ -375,6 +368,9 @@ while run:
     dt = 1
     
     time_since_start += dt
+    
+    if time_since_start % 100 == 0:
+        print(time_since_start)
 
     win.fill((0,0,0))
     
@@ -477,6 +473,10 @@ while run:
    
         alive.append(car[i].alive)
         fitness.append(car[i].fitness)
+        
+        if time_since_start > 2000:
+            car[i].alive = False
+            car[i].fitness -= time_since_start
     
     if (sum(alive) == 1):
         #Showing fitness of the last alive
@@ -504,6 +504,7 @@ while run:
             car[i].fitness = 0
             car[i].index = 0
             car[i].alive = True
+            time_since_start = 0
            
     
     alive = []
