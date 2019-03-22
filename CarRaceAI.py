@@ -127,7 +127,8 @@ class Car():
         
         
         #Updating the fitness
-        self.fitness += CAR_SPEED 
+        if self.velocity.y != 0:
+            self.fitness +=  sqrt(self.velocity.x**2 + self.velocity.y**2)
         
 
 
@@ -359,6 +360,8 @@ myfont = pygame.font.SysFont('Comic Sans MS', 20)
 best_fitness = [0] * 10
 the_best_fitness = 0
 
+time_since_start = 0
+
 
 run = True
 
@@ -370,6 +373,8 @@ while run:
     
     
     dt = 1
+    
+    time_since_start += dt
 
     win.fill((0,0,0))
     
@@ -460,11 +465,15 @@ while run:
                 #print("Going back", i, car[i].index, index)
                 #Exit_RS.write("Going back: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
                 car[i].alive = False
-                car[i].fitness = -100
+                car[i].fitness = -1000
             else:
                 #print("Going forward", i, car[i].index, index)
                 #Exit_RS.write("Going forward: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
                 car[i].index = index
+                
+        if time_since_start > 100 and car[i].velocity.y == 0:
+            car[i].alive = False
+            car[i].fitness = -1000
    
         alive.append(car[i].alive)
         fitness.append(car[i].fitness)
