@@ -88,15 +88,14 @@ class Car():
         
     def __init__(self):
         self.position = Vector2(CAR_INIT_X,CAR_INIT_Y)
+        #self.velocity = Vector2(0.0, 0.0)
         self.velocity = Vector2(0.0, -1*CAR_SPEED)
         self.angle = CAR_INIT_ANGLE
         self.length = CAR_LENGTH
-        #self.width = CAR_WIDTH
-        #self.max_acceleration = 0
-        self.max_steering = CAR_MAX_STEER_ANGLE
         self.max_acceleration = CAR_MAX_ACCELERATION
+        self.max_steering = CAR_MAX_STEER_ANGLE
         self.max_velocity = CAR_MAX_VELOCITY
-        
+
         self.brake_deceleration = CAR_BRAKE_DECELERATION
         self.free_deceleration = CAR_FREE_DECELERATION
         
@@ -104,17 +103,14 @@ class Car():
         self.steering = 0.0
         
         self.alive = True
-        
         self.fitness = 0
-        
         self.index = 0
 
     
     def update(self, dt):
-        #Velocity is constant for the moment
-        #self.velocity += (self.acceleration * (-1) * sin(self.angle) * dt, self.acceleration * (-1) * cos(self.angle) * dt)
-        #self.velocity = (max(-self.max_velocity * (-1) * sin(self.angle), min(self.velocity.x, self.max_velocity * (-1) * sin(self.angle))), \
-        #                 max(-self.max_velocity * (-1) * cos(self.angle), min(self.velocity.y, self.max_velocity * (-1) * cos(self.angle))))
+       
+        self.velocity += (0, self.acceleration * dt)
+        self.velocity.y = max(-self.max_velocity, min(self.velocity.y, self.max_velocity))
         
         if self.steering:
             turning_radius = self.length / tan(radians(self.steering))
