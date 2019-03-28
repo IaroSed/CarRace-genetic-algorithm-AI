@@ -81,7 +81,6 @@ class Car():
         
     def __init__(self):
         self.position = Vector2(CAR_INIT_X,CAR_INIT_Y)
-        #self.velocity = Vector2(0.0, 0.0)
         self.velocity = Vector2(0.0, -1*CAR_SPEED)
         self.angle = CAR_INIT_ANGLE
         self.length = CAR_LENGTH
@@ -101,9 +100,13 @@ class Car():
 
     
     def update(self, dt):
-       
-        self.velocity += (0, self.acceleration * dt)
-        self.velocity.y = max(-self.max_velocity, min(self.velocity.y, self.max_velocity))
+        
+        if self.velocity.y < 0:
+            self.velocity -= (0, self.acceleration * dt)
+        else:
+            self.velocity += (0, self.acceleration * dt)
+        
+        self.velocity.y = copysign(min(abs(self.velocity.y), self.max_velocity),self.velocity.y)
         
         if self.steering:
             turning_radius = self.length / tan(radians(self.steering))
@@ -148,8 +151,12 @@ def calculate_distances(position, a):
     for i in range(0, SCREEN_WIDTH):
         xf = int(position.x + i *cos(3/2*pi + radians(-a)))
         yf = int(position.y + i *sin(3/2*pi + radians(-a)))
-        if (bg_sprite.get_at((xf,yf))!=ROAD_COLOR):
-            break;
+        try:
+            if (bg_sprite.get_at((xf,yf))!=ROAD_COLOR):
+                break;
+        except:
+            xf = position.x
+            yf = position.y
     
     df = sqrt((position.x-xf)**2 + (position.y-yf)**2)
     #pygame.draw.circle(win, (255,0,0), (int(xf), int(yf)), 2)
@@ -158,8 +165,12 @@ def calculate_distances(position, a):
     for i in range(0, SCREEN_WIDTH):
         xr = int(position.x + i *cos(2*pi + radians(-a)))
         yr = int(position.y + i *sin(2*pi + radians(-a)))
-        if (bg_sprite.get_at((xr,yr))!=ROAD_COLOR):
-            break;
+        try:
+            if (bg_sprite.get_at((xr,yr))!=ROAD_COLOR):
+                break;
+        except:
+            xr = position.x
+            yr = position.y
             
     dr = sqrt((position.x-xr)**2 + (position.y-yr)**2)        
     #pygame.draw.circle(win, (255,0,0), (int(xr), int(yr)), 2)
@@ -168,8 +179,12 @@ def calculate_distances(position, a):
     for i in range(0, SCREEN_WIDTH):
         xl = int(position.x + i *cos(pi + radians(-a)))
         yl = int(position.y + i *sin(pi + radians(-a)))
-        if (bg_sprite.get_at((xl,yl))!=ROAD_COLOR):
-            break;
+        try:
+            if (bg_sprite.get_at((xl,yl))!=ROAD_COLOR):
+                break;
+        except:
+            xl = position.x
+            yl = position.y
     
     dl = sqrt((position.x-xl)**2 + (position.y-yl)**2)        
     #pygame.draw.circle(win, (255,0,0), (int(xl), int(yl)), 2)
@@ -178,8 +193,12 @@ def calculate_distances(position, a):
     for i in range(0, SCREEN_WIDTH):
         xdr = int(position.x + i *cos(1.75*pi + radians(-a)))
         ydr = int(position.y + i *sin(1.75*pi + radians(-a)))
-        if (bg_sprite.get_at((xdr,ydr))!=ROAD_COLOR):
-            break;
+        try:
+            if (bg_sprite.get_at((xdr,ydr))!=ROAD_COLOR):
+                break;
+        except:
+            xdr = position.x
+            ydr = position.y
     
     ddr = sqrt((position.x-xdr)**2 + (position.y-ydr)**2)        
     #pygame.draw.circle(win, (255,0,0), (int(xdr), int(ydr)), 2)
@@ -188,8 +207,12 @@ def calculate_distances(position, a):
     for i in range(0, SCREEN_WIDTH):
         xdl = int(position.x + i *cos(1.25*pi + radians(-a)))
         ydl = int(position.y + i *sin(1.25*pi + radians(-a)))
-        if (bg_sprite.get_at((xdl,ydl))!=ROAD_COLOR):
-            break;
+        try:
+            if (bg_sprite.get_at((xdl,ydl))!=ROAD_COLOR):
+                break;
+        except:
+            xdl = position.x
+            ydl = position.y
     
     ddl = sqrt((position.x-xdl)**2 + (position.y-ydl)**2)        
     #pygame.draw.circle(win, (255,0,0), (int(xdl), int(ydl)), 2)
@@ -414,28 +437,39 @@ while run:
         
 
         if Acceleration_up[i]:
-            if car[i].velocity.x < 0:
-                car[i].acceleration = car[i].brake_deceleration
-            else:
-                car[i].acceleration += 1 * dt
+            #if car[i].velocity.y > 0:
+            #    car[i].acceleration = car[i].brake_deceleration
+            #else:
+            car[i].acceleration += 1 * dt
         elif Acceleration_down[i]:
-            if car[i].velocity.x > 0:
-                car[i].acceleration = -car[i].brake_deceleration
-            else:
-                car[i].acceleration -= 1 * dt
+            #if car[i].velocity.y < 0:
+            #    car[i].acceleration = -car[i].brake_deceleration
+            #else:
+            car[i].acceleration -= 1 * dt
         elif Brakes[i]:
-            if abs(car[i].velocity.x) > dt * car[i].brake_deceleration:
-                car[i].acceleration = -copysign(car[i].brake_deceleration, car[i].velocity.x)
-            else:
-                car[i].acceleration = -car[i].velocity.x / dt
+            #if abs(car[i].velocity.y) > dt * car[i].brake_deceleration:
+            #    car[i].acceleration = -copysign(car[i].brake_deceleration, car[i].velocity.y)
+            #else:
+            #    car[i].acceleration = -car[i].velocity.y / dt
+            car[i].acceleration = 0
+            if car[i].velocity.y < 0:
+                car[i].velocity.y -= car[i].brake_deceleration
+            elif car[i].velocity.y > 0:
+                car[i].velocity.y += car[i].brake_deceleration   
         else:
-            if abs(car[i].velocity.x) > dt * car[i].free_deceleration:
-                car[i].acceleration = -copysign(car[i].free_deceleration, car[i].velocity.x)
-            else:
-                if dt != 0:
-                    car[i].acceleration = -car[i].velocity.x / dt
+            #if abs(car[i].velocity.y) > dt * car[i].free_deceleration:
+            #    car[i].acceleration = -copysign(car[i].free_deceleration, car[i].velocity.y)
+            #else:
+            #    if dt != 0:
+            #       car[i].acceleration = -car[i].velocity.y / dt
+            car[i].acceleration = 0
+            if car[i].velocity.y < 0:
+                car[i].velocity.y -= car[i].free_deceleration
+            elif car[i].velocity.y > 0:
+                car[i].velocity.y += car[i].free_deceleration
 
-        car[i].acceleration = max(-car[i].max_acceleration, min(car[i].acceleration, car[i].max_acceleration))
+        #car[i].acceleration = max(-car[i].max_acceleration, min(car[i].acceleration, car[i].max_acceleration))
+        car[i].acceleration = max(0, min(car[i].acceleration, car[i].max_acceleration))
         
         
         if Turn_left[i]:
@@ -449,8 +483,13 @@ while run:
 
         
         #Collision detection
-        if (bg_sprite.get_at((int(car[i].position.x),int(car[i].position.y)))!=ROAD_COLOR):
+        try:
+            if (bg_sprite.get_at((int(car[i].position.x),int(car[i].position.y)))!=ROAD_COLOR):
+                car[i].alive = False
+                car[i].fitness -= time_since_start
+        except:
             car[i].alive = False
+            car[i].fitness -= time_since_start
         
         car_rect = pygame.Rect(car[i].position.x,car[i].position.y,10,10)
         index = car_rect.collidelist(Rect_list)
@@ -461,7 +500,7 @@ while run:
                 #print("Going back", i, car[i].index, index)
                 #Exit_RS.write("Going back: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
                 car[i].alive = False
-                car[i].fitness = -1000
+                car[i].fitness = -10000
             else:
                 #print("Going forward", i, car[i].index, index)
                 #Exit_RS.write("Going forward: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
@@ -469,7 +508,7 @@ while run:
                 
         if time_since_start > 100 and car[i].velocity.y == 0:
             car[i].alive = False
-            car[i].fitness = -1000
+            car[i].fitness = -10000
    
         alive.append(car[i].alive)
         fitness.append(car[i].fitness)
