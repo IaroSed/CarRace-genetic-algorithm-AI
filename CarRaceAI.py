@@ -74,7 +74,7 @@ DELTA = 0.5
 bg_sprite = pygame.image.load('Circuit.png')
 car_image = pygame.image.load('Car.png')
 
-#Exit_RS = open("ResultsSelection.txt", 'w',encoding='utf-8')
+Exit_RS = open("ResultsDriving.txt", 'w',encoding='utf-8')
 
 # Defining classes
 class Car():
@@ -378,6 +378,7 @@ the_best_fitness = 0
 
 time_since_start = 0
 
+first_car_index = 0
 
 run = True
 
@@ -435,41 +436,39 @@ while run:
         Acceleration_down[i] = (Acceleration_down[i] > 0.5)
         Brakes[i] = (Brakes[i] > 0.5)
         
+        if i == first_car_index and car[i].fitness > 2000:
+            #print("Generation:", Generation, "Fitness:", car[i].fitness, "Acceleration up:",Acceleration_up[i],"Acceleration down:",Acceleration_down[i], "Brakes", Brakes[i], "Car Velocity:", car[i].velocity, "Car acceleration:", car[i].acceleration)
+            Exit_RS.write("Generation:" + '^' + str(Generation)  + '^' +  "Fitness:" + '^' +  str(car[i].fitness) + '^' +  "Acceleration up:" + '^' + str(Acceleration_up[i]) + '^' + "Acceleration down:" + '^' + str(Acceleration_down[i])  + '^' +  "Brakes" + '^' + str(Brakes[i]) + '^' +  "Car Velocity:" + '^' + str(car[i].velocity)  + '^' +  "Car acceleration:" + '^' + str(car[i].acceleration) + "/n")
 
         if Acceleration_up[i]:
-            #if car[i].velocity.y > 0:
-            #    car[i].acceleration = car[i].brake_deceleration
-            #else:
+
             car[i].acceleration += 1 * dt
+            
         elif Acceleration_down[i]:
-            #if car[i].velocity.y < 0:
-            #    car[i].acceleration = -car[i].brake_deceleration
-            #else:
+            
             car[i].acceleration -= 1 * dt
+            
         elif Brakes[i]:
-            #if abs(car[i].velocity.y) > dt * car[i].brake_deceleration:
-            #    car[i].acceleration = -copysign(car[i].brake_deceleration, car[i].velocity.y)
-            #else:
-            #    car[i].acceleration = -car[i].velocity.y / dt
+
             car[i].acceleration = 0
             if car[i].velocity.y < 0:
                 car[i].velocity.y -= car[i].brake_deceleration
             elif car[i].velocity.y > 0:
                 car[i].velocity.y += car[i].brake_deceleration   
+                
         else:
-            #if abs(car[i].velocity.y) > dt * car[i].free_deceleration:
-            #    car[i].acceleration = -copysign(car[i].free_deceleration, car[i].velocity.y)
-            #else:
-            #    if dt != 0:
-            #       car[i].acceleration = -car[i].velocity.y / dt
+
             car[i].acceleration = 0
             if car[i].velocity.y < 0:
                 car[i].velocity.y -= car[i].free_deceleration
             elif car[i].velocity.y > 0:
                 car[i].velocity.y += car[i].free_deceleration
 
-        #car[i].acceleration = max(-car[i].max_acceleration, min(car[i].acceleration, car[i].max_acceleration))
         car[i].acceleration = max(0, min(car[i].acceleration, car[i].max_acceleration))
+        
+        if i == first_car_index:
+            print("Acceleration up:",Acceleration_up[i],"Acceleration down:",Acceleration_down[i], "Brakes", Brakes[i], "Car Velocity:", car[i].velocity, "Car acceleration:", car[i].acceleration)
+        
         
         
         if Turn_left[i]:
@@ -516,15 +515,15 @@ while run:
         if time_since_start > 2000:
             car[i].alive = False
             car[i].fitness -= time_since_start
+            
+    first_car_index = [i for i, j in enumerate(fitness) if j == max(fitness)][0]
     
     if (sum(alive) == 1):
         #Showing fitness of the last alive
         index_last = [i for i, x in enumerate(alive) if x][0]
         fitness_info = myfont.render('Fitness of the last alive: ' + str(car[index_last].fitness) + ' Acceleration: ' + str(car[index_last].acceleration) + ' Velocity: ' + str(car[index_last].velocity) , False, (255, 255, 255))
         win.blit(fitness_info,(5,SCREEN_HEIGHT + 25))
-        #Score
-        #score_info = myfont.render('Score: ' + str(car[[i for i, x in enumerate(alive) if x][0]].score) , False, (0, 0, 0))
-        #win.blit(score_info,(5, 5))    
+
         
     if (not any(alive)):
         
@@ -546,6 +545,7 @@ while run:
             time_since_start = 0
            
     
+
     alive = []
     fitness = []     
     
