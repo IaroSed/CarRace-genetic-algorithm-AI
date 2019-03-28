@@ -54,7 +54,7 @@ TEXT_ZONE = 100
 
 CAR_INIT_X = 75
 CAR_INIT_Y = 500
-CAR_SPEED = 5
+CAR_SPEED = 6
 CAR_INIT_ANGLE = 0
 CAR_LENGTH = 33
 CAR_WIDTH = 19
@@ -62,8 +62,8 @@ CAR_MAX_STEER_ANGLE = 30
 CAR_MAX_ACCELERATION = 5
 CAR_MAX_VELOCITY = 100
 
-CAR_BRAKE_DECELERATION = 10
-CAR_FREE_DECELERATION = 2
+CAR_BRAKE_DECELERATION = 2
+CAR_FREE_DECELERATION = 1
 
 ROAD_COLOR = (96, 96, 96, 255)
 
@@ -124,7 +124,7 @@ class Car():
         
         #Updating the fitness
         if self.velocity.y != 0:
-            self.fitness +=  sqrt(self.velocity.x**2 + self.velocity.y**2)
+            self.fitness +=  abs(self.velocity.y)
         
 
 
@@ -406,117 +406,117 @@ while run:
             
             run = False
     
-    for i in range(0,NUMBER_MODELS):        
-        
-        #keys = pygame.key.get_pressed()
+    for i in range(0,NUMBER_MODELS):    
         
         rotated = pygame.transform.rotate(car_image, car[i].angle)
         car_rect = rotated.get_rect()
         
         win.blit(rotated, Vector2(car[i].position)  - (car_rect.width / 2, car_rect.height / 2))
         
-        
-        if (car[i].alive == True):
+        if car[i].alive:
+            
             car[i].update(dt)
-        
-        # Calculating the distances around the car - inputs of the ANN model
-        X[i].iloc[0,0], X[i].iloc[0,1],X[i].iloc[0,2],X[i].iloc[0,3],X[i].iloc[0,4] = calculate_distances(car[i].position,car[i].angle)
- 
-       
-        # Predicting the Test set results:
-        Turn_right[i] = classifier[i].predict(X[i])[0][0]
-        Turn_left[i] = classifier[i].predict(X[i])[0][1]
-        Acceleration_up[i] = classifier[i].predict(X[i])[0][2]
-        Acceleration_down[i] = classifier[i].predict(X[i])[0][3]
-        Brakes[i] = classifier[i].predict(X[i])[0][4]
-        
-        Turn_right[i] = (Turn_right[i] > 0.5)
-        Turn_left[i] = (Turn_left[i] > 0.5)
-        Acceleration_up[i] = (Acceleration_up[i] > 0.5)
-        Acceleration_down[i] = (Acceleration_down[i] > 0.5)
-        Brakes[i] = (Brakes[i] > 0.5)
-        
-        if i == first_car_index and car[i].fitness > 2000:
-            #print("Generation:", Generation, "Fitness:", car[i].fitness, "Acceleration up:",Acceleration_up[i],"Acceleration down:",Acceleration_down[i], "Brakes", Brakes[i], "Car Velocity:", car[i].velocity, "Car acceleration:", car[i].acceleration)
-            Exit_RS.write("Generation:" + '^' + str(Generation)  + '^' +  "Fitness:" + '^' +  str(car[i].fitness) + '^' +  "Acceleration up:" + '^' + str(Acceleration_up[i]) + '^' + "Acceleration down:" + '^' + str(Acceleration_down[i])  + '^' +  "Brakes" + '^' + str(Brakes[i]) + '^' +  "Car Velocity:" + '^' + str(car[i].velocity)  + '^' +  "Car acceleration:" + '^' + str(car[i].acceleration) + "/n")
-
-        if Acceleration_up[i]:
-
-            car[i].acceleration += 1 * dt
             
-        elif Acceleration_down[i]:
+            # Calculating the distances around the car - inputs of the ANN model
+            X[i].iloc[0,0], X[i].iloc[0,1],X[i].iloc[0,2],X[i].iloc[0,3],X[i].iloc[0,4] = calculate_distances(car[i].position,car[i].angle)
+     
+           
+            # Predicting the Test set results:
+            Turn_right[i] = classifier[i].predict(X[i])[0][0]
+            Turn_left[i] = classifier[i].predict(X[i])[0][1]
+            Acceleration_up[i] = classifier[i].predict(X[i])[0][2]
+            Acceleration_down[i] = classifier[i].predict(X[i])[0][3]
+            Brakes[i] = classifier[i].predict(X[i])[0][4]
             
-            car[i].acceleration -= 1 * dt
-            
-        elif Brakes[i]:
+            Turn_right[i] = (Turn_right[i] > 0.5)
+            Turn_left[i] = (Turn_left[i] > 0.5)
+            Acceleration_up[i] = (Acceleration_up[i] > 0.5)
+            Acceleration_down[i] = (Acceleration_down[i] > 0.5)
+            Brakes[i] = (Brakes[i] > 0.5)
 
-            car[i].acceleration = 0
-            if car[i].velocity.y < 0:
-                car[i].velocity.y -= car[i].brake_deceleration
-            elif car[i].velocity.y > 0:
-                car[i].velocity.y += car[i].brake_deceleration   
                 
-        else:
-
-            car[i].acceleration = 0
-            if car[i].velocity.y < 0:
-                car[i].velocity.y -= car[i].free_deceleration
-            elif car[i].velocity.y > 0:
-                car[i].velocity.y += car[i].free_deceleration
-
-        car[i].acceleration = max(0, min(car[i].acceleration, car[i].max_acceleration))
-        
-        if i == first_car_index:
-            print("Acceleration up:",Acceleration_up[i],"Acceleration down:",Acceleration_down[i], "Brakes", Brakes[i], "Car Velocity:", car[i].velocity, "Car acceleration:", car[i].acceleration)
-        
-        
-        
-        if Turn_left[i]:
-            car[i].steering += 30 * dt
-        elif Turn_right[i]:
-            car[i].steering -= 30 * dt
-        else:
-            car[i].steering = 0
             
-        car[i].steering = max(-car[i].max_steering, min(car[i].steering, car[i].max_steering))
+            if Acceleration_up[i]:
+    
+                car[i].acceleration += 1 * dt
+                
+            if Acceleration_down[i]:
+                
+                car[i].acceleration -= 1 * dt
+            
+            if Brakes[i]:
+    
+                car[i].acceleration = 0
+                
+                if car[i].velocity.y < 0:
+                    car[i].velocity.y += car[i].brake_deceleration
+                    car[i].velocity.y = min(0, max(car[i].velocity.y, -1*car[i].max_velocity))
+                 
+            if (Acceleration_up[i] == False and Acceleration_down[i] == False and Brakes[i] == False):
+    
+                car[i].acceleration = 0
+                
+                if car[i].velocity.y < 0:
+                    car[i].velocity.y += car[i].free_deceleration
+                    car[i].velocity.y = min(0, max(car[i].velocity.y, -1*car[i].max_velocity))
+    
+            car[i].acceleration = max(0, min(car[i].acceleration, car[i].max_acceleration))
+           
+            
+            if Turn_left[i]:
+                car[i].steering += 30 * dt
+            elif Turn_right[i]:
+                car[i].steering -= 30 * dt
+            else:
+                car[i].steering = 0
+                
+            car[i].steering = max(-car[i].max_steering, min(car[i].steering, car[i].max_steering))
+            
+            #if i == first_car_index:
+            #print("Generation:", Generation, "Fitness:", car[i].fitness, "Acceleration up:",Acceleration_up[i],"Acceleration down:",Acceleration_down[i], "Brakes", Brakes[i], "Car Velocity:", car[i].velocity, "Car acceleration:", car[i].acceleration)
+            Exit_RS.write("Generation:" + '^' + str(Generation)  + '^' +  "Car number" + '^' + str(i)  + '^' +  "Fitness:" + '^' +  str(car[i].fitness) + '^' +  "Acceleration up:" + '^' + str(Acceleration_up[i]) + '^' + "Acceleration down:" + '^' + str(Acceleration_down[i])  + '^' +  "Brakes" + '^' + str(Brakes[i]) + '^' +  "Car Velocity:" + '^' + str(car[i].velocity)  + '^' +  "Car acceleration:" + '^' + str(car[i].acceleration) + "\n")
+    
+    
+            
+            #Collision detection
+            try:
+                if (bg_sprite.get_at((int(car[i].position.x),int(car[i].position.y)))!=ROAD_COLOR):
+                    car[i].alive = False
+                    car[i].fitness -= time_since_start
+            except:
 
-        
-        #Collision detection
-        try:
-            if (bg_sprite.get_at((int(car[i].position.x),int(car[i].position.y)))!=ROAD_COLOR):
                 car[i].alive = False
                 car[i].fitness -= time_since_start
-        except:
-            car[i].alive = False
-            car[i].fitness -= time_since_start
-        
-        car_rect = pygame.Rect(car[i].position.x,car[i].position.y,10,10)
-        index = car_rect.collidelist(Rect_list)
-        #print(index)
-        if index != -1:
-           # print("Collision")
-            if car[i].index == (index + 1)  % len(Rect_list):
-                #print("Going back", i, car[i].index, index)
-                #Exit_RS.write("Going back: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
+            
+            car_rect = pygame.Rect(car[i].position.x,car[i].position.y,10,10)
+            index = car_rect.collidelist(Rect_list)
+
+            if index != -1:
+
+                if car[i].index == (index + 1)  % len(Rect_list):
+                    #print("Going back", i, car[i].index, index)
+                    #Exit_RS.write("Going back: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
+                    car[i].alive = False
+                    car[i].fitness = -10000
+                else:
+                    #print("Going forward", i, car[i].index, index)
+                    #Exit_RS.write("Going forward: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
+                    car[i].index = index
+                    
+            if time_since_start > 200 and car[i].velocity.y == 0:
                 car[i].alive = False
-                car[i].fitness = -10000
-            else:
-                #print("Going forward", i, car[i].index, index)
-                #Exit_RS.write("Going forward: " + '^' + str(i) + '^' + str(car[i].index) + '^' + str(index)+ "\n")
-                car[i].index = index
+                car[i].fitness -= time_since_start
+       
+            
+            if time_since_start > 2000:
+                car[i].alive = False
+                car[i].fitness -= time_since_start
                 
-        if time_since_start > 100 and car[i].velocity.y == 0:
-            car[i].alive = False
-            car[i].fitness = -10000
-   
+                
         alive.append(car[i].alive)
         fitness.append(car[i].fitness)
-        
-        if time_since_start > 2000:
-            car[i].alive = False
-            car[i].fitness -= time_since_start
             
-    first_car_index = [i for i, j in enumerate(fitness) if j == max(fitness)][0]
+    first_car_index = [b for b, j in enumerate(fitness) if j == max(fitness)][0]
     
     if (sum(alive) == 1):
         #Showing fitness of the last alive
