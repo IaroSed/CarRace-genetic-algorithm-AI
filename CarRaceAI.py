@@ -31,7 +31,7 @@ for i in range(0,10):
     # Adding the input layer and the first hidden layer
     best_classifiers[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
     # Adding second hidden layer
-    classifier[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
+    best_classifiers[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'relu', input_dim = 5))
     # Adding the output layer
     best_classifiers[i].add(Dense(output_dim = 5, kernel_initializer='random_uniform', activation = 'sigmoid'))
     
@@ -277,6 +277,8 @@ def mutate():
     #Introducing mutations: with a probability of (100% - PROBA) each weight can be changed by a number between -DELTA to +DELTA.
     for i in range(5,NUMBER_MODELS):
         
+        #print(i)
+        
         A1 = classifier[i].get_weights()[0][0]
         B1 = classifier[i].get_weights()[0][1]
         C1 = classifier[i].get_weights()[0][2]
@@ -289,24 +291,24 @@ def mutate():
         D2 = classifier[i].get_weights()[2][3]
         E2 = classifier[i].get_weights()[2][4]
         
-        
         A3 = classifier[i].get_weights()[4][0]
         B3 = classifier[i].get_weights()[4][1]
         C3 = classifier[i].get_weights()[4][2]
         D3 = classifier[i].get_weights()[4][3]
         E3 = classifier[i].get_weights()[4][4]
         
+        '''
         A4 = classifier[i].get_weights()[6][0]
         B4 = classifier[i].get_weights()[6][1]
         C4 = classifier[i].get_weights()[6][2]
         D4 = classifier[i].get_weights()[6][3]
         E4 = classifier[i].get_weights()[6][4]
-        
+        '''
         
         Z1 = classifier[i].get_weights()[1]
         Z2 = classifier[i].get_weights()[3]
         Z3 = classifier[i].get_weights()[5]
-        Z4 = classifier[i].get_weights()[6]
+        #Z4 = classifier[i].get_weights()[7]
 
         #number_changes = 0
         
@@ -315,96 +317,126 @@ def mutate():
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 A1[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 B1[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 C1[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 D1[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 E1[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 A2[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 B2[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 C2[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 D2[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 E2[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 A3[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 B3[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 C3[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 D3[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 E3[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
+            '''    
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 A4[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 B4[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 C4[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 D4[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
+                #number_changes += 1
             if random.uniform(0,1) > PROBA:
                 change = random.uniform(-DELTA,DELTA)
                 E4[j] += change
-                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                #classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+                classifier[i].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3])
                 #number_changes += 1
+            '''
     print("7: " + str(best_classifiers[0].get_weights()[0][0]))    
 
 
@@ -635,3 +667,41 @@ while run:
     
 
 pygame.quit()
+
+
+'''
+A1 = classifier[0].get_weights()[0][0]
+B1 = classifier[0].get_weights()[0][1]
+C1 = classifier[0].get_weights()[0][2]
+D1 = classifier[0].get_weights()[0][3]
+E1 = classifier[0].get_weights()[0][4]
+
+A2 = classifier[0].get_weights()[2][0]
+B2 = classifier[0].get_weights()[2][1]
+C2 = classifier[0].get_weights()[2][2]
+D2 = classifier[0].get_weights()[2][3]
+E2 = classifier[0].get_weights()[2][4]
+
+
+A3 = classifier[0].get_weights()[4][0]
+B3 = classifier[0].get_weights()[4][1]
+C3 = classifier[0].get_weights()[4][2]
+D3 = classifier[0].get_weights()[4][3]
+E3 = classifier[0].get_weights()[4][4]
+
+A4 = classifier[0].get_weights()[6][0]
+B4 = classifier[0].get_weights()[6][1]
+C4 = classifier[0].get_weights()[6][2]
+D4 = classifier[0].get_weights()[6][3]
+E4 = classifier[0].get_weights()[6][4]
+
+
+Z1 = classifier[0].get_weights()[1]
+Z2 = classifier[0].get_weights()[3]
+Z3 = classifier[0].get_weights()[5]
+Z4 = classifier[0].get_weights()[7]
+
+change = random.uniform(-DELTA,DELTA)
+A1[0] += change
+classifier[0].set_weights([np.array([list(A1),list(B1),list(C1),list(D1),list(E1)]), Z1, np.array([list(A2),list(B2),list(C2),list(D2),list(E2)]), Z2, np.array([list(A3),list(B3),list(C3),list(D3),list(E3)]), Z3, np.array([list(A4),list(B4),list(C4),list(D4),list(E4)]), Z4])
+'''
